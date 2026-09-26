@@ -4,8 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.kartland.gnsslogger.databinding.ActivityMainBinding
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity(), GnssListener {
         gnss = UsbGnssManager(applicationContext, measRateMs = 40) // 40ms = 25Hz target
         gnss.listener = this
 
-        binding.btnStartStop.setOnClickListener { toggleLogging() }
+        binding.btnStartStop.setOnClickListener { onStartStopClicked() }
         binding.btnShare.setOnClickListener { shareLog() }
         binding.btnReconnect.setOnClickListener {
             appendRaw("— reconnexion demandée —")
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity(), GnssListener {
 
     override fun onDestroy() {
         // Deliberately not in onStop(): a notification shade or a brief screen-off shouldn't
-        // kill a running session. While logging we also hold the screen on (see toggleLogging),
+        // kill a running session. While logging we also hold the screen on (see startLogging),
         // which is what keeps the activity alive during a real test.
         if (csvLogger.isLogging) csvLogger.stop()
         gnss.disconnect()
@@ -68,28 +70,64 @@ class MainActivity : AppCompatActivity(), GnssListener {
 
     // ---- Actions ---------------------------------------------------------------------------
 
-    private fun toggleLogging() {
+    private fun onStartStopClicked() {
         if (csvLogger.isLogging) {
-            val count = csvLogger.stop()
-            binding.btnStartStop.text = getString(R.string.btn_start)
-            binding.btnStartStop.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(getColor(R.color.kart_green))
-            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            Toast.makeText(this, getString(R.string.toast_log_stopped, count), Toast.LENGTH_SHORT).show()
+            confirmStop()
         } else {
-            if (!gnss.isConnected) {
-                Toast.makeText(this, R.string.toast_not_connected, Toast.LENGTH_LONG).show()
-                return
-            }
-            val file = csvLogger.start()
-            binding.btnStartStop.text = getString(R.string.btn_stop)
-            binding.btnStartStop.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(getColor(R.color.kart_red))
-            binding.textLogFile.text = file.absolutePath
-            // A logging session must survive the screen timeout — no foreground service yet.
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            Toast.makeText(this, getString(R.string.toast_log_started, file.name), Toast.LENGTH_SHORT).show()
+            startLogging()
         }
+    }
+
+    private fun startLogging() {
+        if (!gnss.isConnected) {
+            Toast.makeText(this, R.string.toast_not_connected, Toast.LENGTH_LONG).show()
+            return
+        }
+        val file = csvLogger.start()
+        binding.btnStartStop.text = getString(R.string.btn_stop)
+        binding.btnStartStop.backgroundTintList =
+            android.content.res.ColorStateList.valueOf(getColor(R.color.kart_red))
+        binding.textLogFile.text = file.absolutePath
+        // A logging session must survive the screen timeout — no foreground service yet.
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        startTimer()
+        Toast.makeText(this, getString(R.string.toast_log_started, file.name), Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * A confirmation gate before actually stopping: the phone spends most of a session in a
+     * pocket or on a mount, and a stray touch on this button mid-run would otherwise silently
+     * end the log with no way to resume it and waste the whole karting session. Starting has
+     * no such gate — only stopping is the hard-to-undo action.
+     */
+    private fun confirmStop() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_stop_title)
+            .setMessage(R.string.dialog_stop_message)
+            .setPositiveButton(R.string.dialog_stop_confirm) { _, _ -> stopLogging() }
+            .setNegativeButton(R.string.dialog_stop_cancel, null)
+            .show()
+    }
+
+    private fun stopLogging() {
+        val count = csvLogger.stop()
+        binding.btnStartStop.text = getString(R.string.btn_start)
+        binding.btnStartStop.backgroundTintList =
+            android.content.res.ColorStateList.valueOf(getColor(R.color.kart_green))
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        stopTimer()
+        Toast.makeText(this, getString(R.string.toast_log_stopped, count), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun startTimer() {
+        binding.chronometerRecording.base = SystemClock.elapsedRealtime()
+        binding.chronometerRecording.start()
+        binding.timerContainer.visibility = View.VISIBLE
+    }
+
+    private fun stopTimer() {
+        binding.chronometerRecording.stop()
+        binding.timerContainer.visibility = View.GONE
     }
 
     private fun shareLog() {

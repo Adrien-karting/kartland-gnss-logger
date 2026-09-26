@@ -19,12 +19,20 @@
     <string name="label_position">Position</string>
     <string name="label_fixes_logged">Points enregistrés</string>
     <string name="label_raw">Trafic brut (diagnostic)</string>
+    <string name="label_timer">Durée d\'enregistrement</string>
 
     <!-- Buttons -->
     <string name="btn_start">Démarrer l\'enregistrement</string>
     <string name="btn_stop">Arrêter l\'enregistrement</string>
     <string name="btn_share">Partager</string>
     <string name="btn_reconnect">Reconnecter</string>
+
+    <!-- Stop confirmation: guards against an accidental stop (pocket, stray touch) killing a
+         session that can't be resumed. -->
+    <string name="dialog_stop_title">Arrêter l\'enregistrement ?</string>
+    <string name="dialog_stop_message">La session en cours sera terminée et le fichier CSV finalisé. Cette action est définitive.</string>
+    <string name="dialog_stop_confirm">Arrêter</string>
+    <string name="dialog_stop_cancel">Continuer l\'enregistrement</string>
 
     <!-- Toasts -->
     <string name="toast_not_connected">Module non connecté — branchez le prototype puis appuyez sur Reconnecter.</string>
