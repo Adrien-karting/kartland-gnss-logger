@@ -1,0 +1,4 @@
+com.kartland.gnsslogger.test.app-androidTest-0 C:\Users\adrie\kartland-gnss-logger\app\build\generated\res\resValues\androidTest\debug
+com.kartland.gnsslogger.test.app-mergeDebugAndroidTestResources-1 C:\Users\adrie\kartland-gnss-logger\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.kartland.gnsslogger.test.app-mergeDebugAndroidTestResources-2 C:\Users\adrie\kartland-gnss-logger\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.kartland.gnsslogger.test.app-debugAndroidTest-3 C:\Users\adrie\kartland-gnss-logger\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources

@@ -1,0 +1,62 @@
+# Compile l'APK sur les serveurs GitHub, qui ont déjà le SDK Android installé.
+# Intérêt : aucune installation nécessaire sur le PC, et Nathan peut récupérer le même build.
+#
+# Récupérer l'APK : onglet "Actions" du dépôt -> dernier run -> section "Artifacts" en bas.
+
+name: Build APK
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  # Permet aussi de lancer un build à la demande depuis l'onglet Actions.
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Garantit un SDK Android complet avec les licences acceptées. Les runners GitHub en
+      # embarquent déjà un, mais cette étape évite les surprises de version.
+      - name: Préparer le SDK Android
+        uses: android-actions/setup-android@v3
+
+      # Fournit Gradle et met en cache les dépendances entre les builds.
+      # On appelle `gradle` directement plutôt que `./gradlew` : le jar du wrapper n'est pas
+      # versionné dans ce dépôt (c'est un binaire), donc cette approche évite de devoir l'ajouter.
+      - name: Préparer Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Compiler l'APK de debug
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Publier l'APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: kartland-gnss-logger-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      # En cas d'échec, remonte les rapports Gradle pour pouvoir diagnostiquer sans
+      # reproduire le build en local.
+      - name: Publier les rapports en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapports-build
+          path: |
+            app/build/reports/
+            build/reports/
+          if-no-files-found: ignore
+          retention-days: 7

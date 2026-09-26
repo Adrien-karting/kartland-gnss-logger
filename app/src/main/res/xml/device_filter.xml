@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Vendor/product IDs for USB-serial chipsets commonly used on GNSS dongles
+    (including the generic UART-to-USB bridges some NEO-M9N breakout/dongle boards use).
+    This list only controls the "auto-open app on plug-in" behavior — usb-serial-for-android's
+    UsbSerialProber does its own compatibility check at connect time regardless, so an
+    unlisted-but-supported chip will still work if the user opens the app manually and grants
+    permission. Add your specific dongle's VID/PID here once known (check with `lsusb` on a PC
+    or the Android USB permission dialog) so the app launches automatically on plug-in.
+-->
+<resources>
+    <!-- Silicon Labs CP210x (common on many GNSS/serial dongles) -->
+    <usb-device vendor-id="4292" product-id="60000" />
+    <!-- FTDI FT232 family -->
+    <usb-device vendor-id="1027" product-id="24577" />
+    <!-- Prolific PL2303 -->
+    <usb-device vendor-id="1659" product-id="8963" />
+    <!-- QinHeng CH340/CH341 -->
+    <usb-device vendor-id="6790" product-id="29987" />
+    <!-- u-blox native USB (many u-blox eval/dongle boards enumerate as a CDC-ACM device
+         under u-blox's own vendor ID) -->
+    <usb-device vendor-id="5446" product-id="424" />
+</resources>

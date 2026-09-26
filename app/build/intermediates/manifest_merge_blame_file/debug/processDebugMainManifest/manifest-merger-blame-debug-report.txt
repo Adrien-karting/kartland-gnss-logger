@@ -1,0 +1,187 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.kartland.gnsslogger"
+4    android:versionCode="1"
+5    android:versionName="0.1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <!-- USB Host mode is how we talk to the external GNSS dongle over the USB-C OTG link. -->
+12    <uses-feature
+12-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:5:5-7:35
+13        android:name="android.hardware.usb.host"
+13-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:6:9-49
+14        android:required="true" />
+14-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:7:9-32
+15
+16    <!--
+17         Only needed pre-Android 10 for writing the CSV log outside app-specific storage;
+18         harmless to keep for older test devices. App targets scoped storage via
+19         getExternalFilesDir() by default, see CsvLogger.kt.
+20    -->
+21    <uses-permission
+21-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:12:5-14:38
+22        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+22-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:13:9-65
+23        android:maxSdkVersion="28" />
+23-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:14:9-35
+24
+25    <permission
+25-->[androidx.core:core:1.13.1] C:\Users\adrie\.gradle\caches\transforms-4\eecbda8adc5521377f06f41deda43748\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+26        android:name="com.kartland.gnsslogger.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+26-->[androidx.core:core:1.13.1] C:\Users\adrie\.gradle\caches\transforms-4\eecbda8adc5521377f06f41deda43748\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+27        android:protectionLevel="signature" />
+27-->[androidx.core:core:1.13.1] C:\Users\adrie\.gradle\caches\transforms-4\eecbda8adc5521377f06f41deda43748\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+28
+29    <uses-permission android:name="com.kartland.gnsslogger.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+29-->[androidx.core:core:1.13.1] C:\Users\adrie\.gradle\caches\transforms-4\eecbda8adc5521377f06f41deda43748\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+29-->[androidx.core:core:1.13.1] C:\Users\adrie\.gradle\caches\transforms-4\eecbda8adc5521377f06f41deda43748\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+30
+31    <application
+31-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:16:5-56:19
+32        android:allowBackup="true"
+32-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:17:9-35
+33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+33-->[androidx.core:core:1.13.1] C:\Users\adrie\.gradle\caches\transforms-4\eecbda8adc5521377f06f41deda43748\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+34        android:debuggable="true"
+35        android:extractNativeLibs="false"
+36        android:icon="@mipmap/ic_launcher"
+36-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:18:9-43
+37        android:label="@string/app_name"
+37-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:19:9-41
+38        android:supportsRtl="true"
+38-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:20:9-35
+39        android:testOnly="true"
+40        android:theme="@style/Theme.KartlandGnssLogger" >
+40-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:21:9-56
+41        <activity
+41-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:23:9-42:20
+42            android:name="com.kartland.gnsslogger.MainActivity"
+42-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:24:13-41
+43            android:configChanges="orientation|screenSize|keyboardHidden"
+43-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:27:13-74
+44            android:exported="true"
+44-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:25:13-36
+45            android:launchMode="singleTask" >
+45-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:26:13-44
+46            <intent-filter>
+46-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:29:13-32:29
+47                <action android:name="android.intent.action.MAIN" />
+47-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:30:17-69
+47-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:30:25-66
+48
+49                <category android:name="android.intent.category.LAUNCHER" />
+49-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:31:17-77
+49-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:31:27-74
+50            </intent-filter>
+51
+52            <!--
+53                 Lets Android auto-launch this app when the GNSS dongle is plugged in,
+54                 instead of relying on the user to open it first and then plug in.
+55            -->
+56            <intent-filter>
+56-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:36:13-38:29
+57                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+57-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:37:17-90
+57-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:37:25-87
+58            </intent-filter>
+59
+60            <meta-data
+60-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:39:13-41:57
+61                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+61-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:40:17-79
+62                android:resource="@xml/device_filter" />
+62-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:41:17-54
+63        </activity>
+64
+65        <!--
+66             Used by the "Share" button to hand the CSV log to another app (Drive, email,
+67             the analysis pipeline, etc.) without exposing a raw file:// path.
+68        -->
+69        <provider
+69-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:46:9-54:20
+70            android:name="androidx.core.content.FileProvider"
+70-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:47:13-62
+71            android:authorities="com.kartland.gnsslogger.fileprovider"
+71-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:48:13-71
+72            android:exported="false"
+72-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:49:13-37
+73            android:grantUriPermissions="true" >
+73-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:50:13-47
+74            <meta-data
+74-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:51:13-53:54
+75                android:name="android.support.FILE_PROVIDER_PATHS"
+75-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:52:17-67
+76                android:resource="@xml/file_paths" />
+76-->C:\Users\adrie\kartland-gnss-logger\app\src\main\AndroidManifest.xml:53:17-51
+77        </provider>
+78        <provider
+78-->[androidx.emoji2:emoji2:1.3.0] C:\Users\adrie\.gradle\caches\transforms-4\868a55f7d79383792b26d5b53f15b066\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+79            android:name="androidx.startup.InitializationProvider"
+79-->[androidx.emoji2:emoji2:1.3.0] C:\Users\adrie\.gradle\caches\transforms-4\868a55f7d79383792b26d5b53f15b066\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+80            android:authorities="com.kartland.gnsslogger.androidx-startup"
+80-->[androidx.emoji2:emoji2:1.3.0] C:\Users\adrie\.gradle\caches\transforms-4\868a55f7d79383792b26d5b53f15b066\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+81            android:exported="false" >
+81-->[androidx.emoji2:emoji2:1.3.0] C:\Users\adrie\.gradle\caches\transforms-4\868a55f7d79383792b26d5b53f15b066\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+82            <meta-data
+82-->[androidx.emoji2:emoji2:1.3.0] C:\Users\adrie\.gradle\caches\transforms-4\868a55f7d79383792b26d5b53f15b066\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+83                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+83-->[androidx.emoji2:emoji2:1.3.0] C:\Users\adrie\.gradle\caches\transforms-4\868a55f7d79383792b26d5b53f15b066\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+84                android:value="androidx.startup" />
+84-->[androidx.emoji2:emoji2:1.3.0] C:\Users\adrie\.gradle\caches\transforms-4\868a55f7d79383792b26d5b53f15b066\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+85            <meta-data
+85-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\adrie\.gradle\caches\transforms-4\66c71d80479abad6f0dbac40e2c6b96c\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:29:13-31:52
+86                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+86-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\adrie\.gradle\caches\transforms-4\66c71d80479abad6f0dbac40e2c6b96c\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:30:17-78
+87                android:value="androidx.startup" />
+87-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\adrie\.gradle\caches\transforms-4\66c71d80479abad6f0dbac40e2c6b96c\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:31:17-49
+88            <meta-data
+88-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+89                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+89-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+90                android:value="androidx.startup" />
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+91        </provider>
+92
+93        <receiver
+93-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+94            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+94-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+95            android:directBootAware="false"
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+96            android:enabled="true"
+96-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+97            android:exported="true"
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+98            android:permission="android.permission.DUMP" >
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+99            <intent-filter>
+99-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+100                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+101            </intent-filter>
+102            <intent-filter>
+102-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+103                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+103-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+103-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+104            </intent-filter>
+105            <intent-filter>
+105-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+106                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+107            </intent-filter>
+108            <intent-filter>
+108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+109                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\adrie\.gradle\caches\transforms-4\fd50654ca51de888bd7dc200a40f860e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+110            </intent-filter>
+111        </receiver>
+112    </application>
+113
+114</manifest>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kartland GNSS Logger</string>
+
+    <!-- Connection states -->
+    <string name="state_disconnected">Déconnecté</string>
+    <string name="state_searching">Recherche du module…</string>
+    <string name="state_detecting">Détection de la vitesse…</string>
+    <string name="state_configuring">Configuration du module…</string>
+    <string name="state_streaming">Connecté</string>
+    <string name="state_error">Erreur</string>
+
+    <!-- Field labels -->
+    <string name="label_fix_type">Fix</string>
+    <string name="label_num_sv">Satellites</string>
+    <string name="label_h_acc">Précision horiz.</string>
+    <string name="label_speed">Vitesse Doppler</string>
+    <string name="label_rate">Cadence</string>
+    <string name="label_position">Position</string>
+    <string name="label_fixes_logged">Points enregistrés</string>
+    <string name="label_raw">Trafic brut (diagnostic)</string>
+
+    <!-- Buttons -->
+    <string name="btn_start">Démarrer l\'enregistrement</string>
+    <string name="btn_stop">Arrêter l\'enregistrement</string>
+    <string name="btn_share">Partager</string>
+    <string name="btn_reconnect">Reconnecter</string>
+
+    <!-- Toasts -->
+    <string name="toast_not_connected">Module non connecté — branchez le prototype puis appuyez sur Reconnecter.</string>
+    <string name="toast_log_started">Enregistrement démarré : %1$s</string>
+    <string name="toast_log_stopped">Enregistrement arrêté (%1$d points).</string>
+    <string name="toast_no_log_to_share">Aucun log à partager pour l\'instant.</string>
+</resources>

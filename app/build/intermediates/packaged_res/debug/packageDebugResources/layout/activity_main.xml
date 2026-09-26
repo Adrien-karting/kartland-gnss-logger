@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Connection state -->
+        <TextView
+            android:id="@+id/textState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/state_disconnected"
+            android:textColor="@color/kart_red"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textStateDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0.75"
+            android:textColor="@color/on_surface"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/textDeviceName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0.55"
+            android:textColor="@color/on_surface"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:background="#33FFFFFF" />
+
+        <!-- Live NAV-PVT fields -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2">
+
+            <TextView style="@style/FieldLabel" android:text="@string/label_fix_type" />
+            <TextView android:id="@+id/textFixType" style="@style/FieldValue" android:text="—" />
+
+            <TextView style="@style/FieldLabel" android:text="@string/label_num_sv" />
+            <TextView android:id="@+id/textNumSv" style="@style/FieldValue" android:text="—" />
+
+            <TextView style="@style/FieldLabel" android:text="@string/label_h_acc" />
+            <TextView android:id="@+id/textHAcc" style="@style/FieldValue" android:text="—" />
+
+            <TextView style="@style/FieldLabel" android:text="@string/label_speed" />
+            <TextView android:id="@+id/textSpeed" style="@style/FieldValue" android:text="—" />
+
+            <TextView style="@style/FieldLabel" android:text="@string/label_rate" />
+            <TextView android:id="@+id/textRate" style="@style/FieldValue" android:text="—" />
+
+            <TextView style="@style/FieldLabel" android:text="@string/label_position" />
+            <TextView android:id="@+id/textPosition" style="@style/FieldValue" android:text="—" />
+
+        </GridLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:background="#33FFFFFF" />
+
+        <!-- Logging -->
+        <TextView
+            android:id="@+id/textFixesLogged"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_fixes_logged"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textLogFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0.55"
+            android:textColor="@color/on_surface"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnStartStop"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/kart_green"
+            android:text="@string/btn_start"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnReconnect"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="@string/btn_reconnect" />
+
+            <Button
+                android:id="@+id/btnShare"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/btn_share" />
+
+        </LinearLayout>
+
+        <!-- Raw diagnostic window: the only thing that helps when nothing else works -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:alpha="0.6"
+            android:text="@string/label_raw"
+            android:textColor="@color/on_surface"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textRawLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:alpha="0.75"
+            android:background="@color/surface"
+            android:fontFamily="monospace"
+            android:padding="10dp"
+            android:textColor="@color/on_surface"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+</ScrollView>

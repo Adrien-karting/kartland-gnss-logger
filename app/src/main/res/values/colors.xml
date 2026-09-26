@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="kart_green">#2E7D32</color>
+    <color name="kart_green_dark">#1B5E20</color>
+    <color name="kart_amber">#F9A825</color>
+    <color name="kart_red">#C62828</color>
+    <color name="background">#121212</color>
+    <color name="surface">#1E1E1E</color>
+    <color name="on_surface">#F5F5F5</color>
+</resources>

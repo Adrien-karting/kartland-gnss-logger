@@ -1,0 +1,52 @@
+// Syntaxe Groovy (fichier .gradle, pas .gradle.kts) : les propriétés booléennes s'écrivent
+// `minifyEnabled false` et non `isMinifyEnabled = false` — cette dernière forme est celle du
+// Kotlin DSL et provoque un "Could not set unknown property" à l'évaluation.
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.kartland.gnsslogger'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.kartland.gnsslogger'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '0.1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
+
+    // Pilote USB Host série (CP210x / FTDI / CH34x / PL2303 + CDC-ACM générique, ce qu'expose
+    // l'adaptateur CP2102 du montage). Publié sur JitPack, pas sur Maven Central.
+    implementation 'com.github.mik3y:usb-serial-for-android:3.10.0'
+}

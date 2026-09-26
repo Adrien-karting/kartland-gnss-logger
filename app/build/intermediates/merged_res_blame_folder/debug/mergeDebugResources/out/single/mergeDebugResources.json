@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.kartland.gnsslogger.app-debug-33:/xml_file_paths.xml.flat",
+        "source": "com.kartland.gnsslogger.app-main-35:/xml/file_paths.xml"
+    },
+    {
+        "merged": "com.kartland.gnsslogger.app-debug-33:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.kartland.gnsslogger.app-main-35:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.kartland.gnsslogger.app-debug-33:/xml_device_filter.xml.flat",
+        "source": "com.kartland.gnsslogger.app-main-35:/xml/device_filter.xml"
+    },
+    {
+        "merged": "com.kartland.gnsslogger.app-debug-33:/layout_activity_main.xml.flat",
+        "source": "com.kartland.gnsslogger.app-main-35:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.kartland.gnsslogger.app-debug-33:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.kartland.gnsslogger.app-main-35:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.kartland.gnsslogger.app-debug-33:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.kartland.gnsslogger.app-main-35:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    }
+]

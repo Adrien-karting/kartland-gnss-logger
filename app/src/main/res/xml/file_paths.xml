@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Matches CsvLogger's output directory: context.getExternalFilesDir(null)/logs -->
+    <external-files-path name="gnss_logs" path="logs/" />
+</paths>
