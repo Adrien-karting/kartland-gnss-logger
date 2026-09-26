@@ -39,4 +39,11 @@
     <string name="toast_log_started">Enregistrement démarré : %1$s</string>
     <string name="toast_log_stopped">Enregistrement arrêté (%1$d points).</string>
     <string name="toast_no_log_to_share">Aucun log à partager pour l\'instant.</string>
+
+    <!-- Recording notification (foreground service) -->
+    <string name="notif_channel_name">Enregistrement en cours</string>
+    <string name="notif_channel_description">Notification permanente affichée pendant un enregistrement GNSS, pour qu\'il continue écran éteint.</string>
+    <string name="notif_title">Enregistrement GNSS en cours</string>
+    <string name="notif_text">%1$d points enregistrés</string>
+    <string name="error_foreground_unavailable">Service d\'arrière-plan indisponible : l\'enregistrement continue, mais gardez l\'application au premier plan et l\'écran allumé.</string>
 </resources>

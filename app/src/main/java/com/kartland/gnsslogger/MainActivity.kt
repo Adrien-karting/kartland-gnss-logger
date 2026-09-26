@@ -1,16 +1,26 @@
 package com.kartland.gnsslogger
 
+import android.Manifest
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.os.SystemClock
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.kartland.gnsslogger.databinding.ActivityMainBinding
+import java.io.File
 import java.util.ArrayDeque
 import java.util.Locale
 
@@ -21,76 +31,119 @@ import java.util.Locale
  * The screen is built around the first-contact problem rather than around pretty numbers —
  * connection state, detected baud and a raw-traffic window are all visible, because the first
  * time this runs it will be on a balcony with an unknown board and no debugger attached.
+ *
+ * The USB link and the CSV log themselves live in [GnssLoggingService]; this activity binds to
+ * it for its whole lifetime and is only the UI on top.
  */
 class MainActivity : AppCompatActivity(), GnssListener {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var gnss: UsbGnssManager
-    private val csvLogger by lazy { CsvLogger(this) }
+
+    /** Null until the bind completes (it is asynchronous), and again after unbind. */
+    private var service: GnssLoggingService? = null
 
     private var lastFixRealtimeNs = 0L
     private var fixIntervalEmaMs = 0.0
     private val rawLines = ArrayDeque<String>()
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            val s = (binder as GnssLoggingService.LocalBinder).service
+            service = s
+            s.listener = this@MainActivity
+            // A recording may already be running (activity recreated mid-session): pick its
+            // state up rather than assuming a fresh start.
+            syncWithService(s)
+            // Covers both "app launched by plugging the dongle in" and "dongle already plugged in".
+            s.connect()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            // Same process, so this only happens if the service crashed.
+            service = null
+        }
+    }
+
+    /**
+     * Android 13+ notification permission. Whatever the answer, logging goes ahead — without it
+     * the foreground service still runs, its notification is just not shown.
+     */
+    private val notificationPermissionRequest =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { startLogging() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        gnss = UsbGnssManager(applicationContext, measRateMs = 40) // 40ms = 25Hz target
-        gnss.listener = this
-
         binding.btnStartStop.setOnClickListener { onStartStopClicked() }
         binding.btnShare.setOnClickListener { shareLog() }
         binding.btnReconnect.setOnClickListener {
             appendRaw("— reconnexion demandée —")
-            gnss.disconnect()
-            gnss.connect()
+            service?.reconnect()
         }
 
         renderState(GnssState.DISCONNECTED, null)
+
+        // Bound for the activity's whole lifetime (not onStart/onStop), so the USB connection
+        // keeps the same scope it had when the activity owned it: a notification shade or a
+        // brief screen-off doesn't drop the link even when not recording.
+        bindService(Intent(this, GnssLoggingService::class.java), serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onStart() {
         super.onStart()
-        gnss.registerReceivers()
-        // Covers both "app launched by plugging the dongle in" and "dongle already plugged in".
-        gnss.connect()
+        // On first launch the bind hasn't completed yet; onServiceConnected handles that case.
+        service?.connect()
     }
 
     override fun onDestroy() {
-        // Deliberately not in onStop(): a notification shade or a brief screen-off shouldn't
-        // kill a running session. While logging we also hold the screen on (see startLogging),
-        // which is what keeps the activity alive during a real test.
-        if (csvLogger.isLogging) csvLogger.stop()
-        gnss.disconnect()
-        gnss.unregisterReceivers()
+        // An active recording is not stopped here: the service is started in the foreground for
+        // the session and outlives this unbind. Only when idle does unbinding end the service
+        // (and with it the USB connection), as before.
+        service?.listener = null
+        service = null
+        unbindService(serviceConnection)
         super.onDestroy()
     }
 
     // ---- Actions ---------------------------------------------------------------------------
 
     private fun onStartStopClicked() {
-        if (csvLogger.isLogging) {
+        if (service?.isLogging == true) {
             confirmStop()
+        } else {
+            requestNotificationPermissionThenStart()
+        }
+    }
+
+    private fun requestNotificationPermissionThenStart() {
+        if (service?.isConnected != true) {
+            // Don't bother with the permission prompt if we can't record anyway.
+            Toast.makeText(this, R.string.toast_not_connected, Toast.LENGTH_LONG).show()
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            // Once permanently denied, the system answers immediately without showing anything.
+            notificationPermissionRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
             startLogging()
         }
     }
 
     private fun startLogging() {
-        if (!gnss.isConnected) {
+        val s = service
+        // Re-checked: the link may have dropped while the permission dialog was up.
+        if (s == null || !s.isConnected) {
             Toast.makeText(this, R.string.toast_not_connected, Toast.LENGTH_LONG).show()
             return
         }
-        val file = csvLogger.start()
-        binding.btnStartStop.text = getString(R.string.btn_stop)
-        binding.btnStartStop.backgroundTintList =
-            android.content.res.ColorStateList.valueOf(getColor(R.color.kart_red))
-        binding.textLogFile.text = file.absolutePath
-        // A logging session must survive the screen timeout — no foreground service yet.
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        startTimer()
+        if (s.isLogging) return
+        val file = s.startLogging()
+        showRecordingUi(file, s.recordingStartElapsedMs)
         Toast.makeText(this, getString(R.string.toast_log_started, file.name), Toast.LENGTH_SHORT).show()
     }
 
@@ -110,17 +163,47 @@ class MainActivity : AppCompatActivity(), GnssListener {
     }
 
     private fun stopLogging() {
-        val count = csvLogger.stop()
+        val s = service ?: return
+        val count = s.stopLogging()
+        showIdleUi()
+        Toast.makeText(this, getString(R.string.toast_log_stopped, count), Toast.LENGTH_SHORT).show()
+    }
+
+    /** Brings the whole screen in line with the service, e.g. after a rebind mid-session. */
+    private fun syncWithService(s: GnssLoggingService) {
+        renderState(s.state, null)
+        val file = s.currentFile
+        if (s.isLogging && file != null) {
+            showRecordingUi(file, s.recordingStartElapsedMs)
+        } else {
+            showIdleUi()
+        }
+        file?.let { binding.textLogFile.text = it.absolutePath }
+        binding.textFixesLogged.text = "${getString(R.string.label_fixes_logged)} : ${s.fixCount}"
+    }
+
+    private fun showRecordingUi(file: File, startElapsedMs: Long) {
+        binding.btnStartStop.text = getString(R.string.btn_stop)
+        binding.btnStartStop.backgroundTintList =
+            android.content.res.ColorStateList.valueOf(getColor(R.color.kart_red))
+        binding.textLogFile.text = file.absolutePath
+        // Screen stays on as long as possible while logging. The foreground service is the
+        // safety net if it goes off anyway (power button in a pocket, app backgrounded).
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        startTimer(startElapsedMs)
+    }
+
+    private fun showIdleUi() {
         binding.btnStartStop.text = getString(R.string.btn_start)
         binding.btnStartStop.backgroundTintList =
             android.content.res.ColorStateList.valueOf(getColor(R.color.kart_green))
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         stopTimer()
-        Toast.makeText(this, getString(R.string.toast_log_stopped, count), Toast.LENGTH_SHORT).show()
     }
 
-    private fun startTimer() {
-        binding.chronometerRecording.base = SystemClock.elapsedRealtime()
+    /** [startElapsedMs] comes from the service, so a recreated activity resumes the count. */
+    private fun startTimer(startElapsedMs: Long) {
+        binding.chronometerRecording.base = startElapsedMs
         binding.chronometerRecording.start()
         binding.timerContainer.visibility = View.VISIBLE
     }
@@ -131,12 +214,13 @@ class MainActivity : AppCompatActivity(), GnssListener {
     }
 
     private fun shareLog() {
-        val file = csvLogger.currentFile
+        val s = service
+        val file = s?.currentFile
         if (file == null || !file.exists()) {
             Toast.makeText(this, R.string.toast_no_log_to_share, Toast.LENGTH_SHORT).show()
             return
         }
-        csvLogger.flush() // so sharing mid-session includes everything written so far
+        s.flush() // so sharing mid-session includes everything written so far
 
         val uri: Uri = FileProvider.getUriForFile(this, "com.kartland.gnsslogger.fileprovider", file)
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -147,7 +231,7 @@ class MainActivity : AppCompatActivity(), GnssListener {
         startActivity(Intent.createChooser(shareIntent, getString(R.string.btn_share)))
     }
 
-    // ---- GnssListener ----------------------------------------------------------------------
+    // ---- GnssListener (forwarded by the service) ------------------------------------------
 
     override fun onStateChanged(state: GnssState, detail: String?) {
         runOnUiThread { renderState(state, detail) }
@@ -165,9 +249,8 @@ class MainActivity : AppCompatActivity(), GnssListener {
     }
 
     override fun onNavPvt(fix: NavPvt) {
+        // CSV writing already happened in the service; this is display only.
         val nowNs = SystemClock.elapsedRealtimeNanos()
-
-        if (csvLogger.isLogging) csvLogger.appendFix(fix, nowNs)
 
         if (lastFixRealtimeNs != 0L) {
             val intervalMs = (nowNs - lastFixRealtimeNs) / 1_000_000.0
@@ -191,7 +274,7 @@ class MainActivity : AppCompatActivity(), GnssListener {
             binding.textPosition.text =
                 String.format(Locale.US, "%.6f, %.6f", fix.latDeg, fix.lonDeg)
             binding.textFixesLogged.text =
-                "${getString(R.string.label_fixes_logged)} : ${csvLogger.fixCount}"
+                "${getString(R.string.label_fixes_logged)} : ${service?.fixCount ?: 0}"
         }
     }
 
@@ -208,15 +291,16 @@ class MainActivity : AppCompatActivity(), GnssListener {
         }
         binding.textState.text = label
         binding.textState.setTextColor(getColor(color))
-        binding.textDeviceName.text = gnss.deviceLabel
+        val s = service
+        binding.textDeviceName.text = s?.deviceLabel ?: ""
 
         binding.textStateDetail.text = when {
             detail != null -> detail
-            state == GnssState.STREAMING && gnss.activeBaud > 0 ->
+            state == GnssState.STREAMING && s != null && s.activeBaud > 0 ->
                 String.format(
                     Locale.US,
                     "%d bauds — cadence soutenable ~%.0f Hz",
-                    gnss.activeBaud, gnss.achievableRateHz
+                    s.activeBaud, s.achievableRateHz
                 )
             else -> ""
         }

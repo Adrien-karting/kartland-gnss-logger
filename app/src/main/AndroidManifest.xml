@@ -13,6 +13,16 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
+    <!-- A recording runs in a foreground service so it survives screen-off and backgrounding.
+         connectedDevice is the matching type for a USB peripheral; on Android 14 its runtime
+         prerequisite is satisfied by the USB permission granted for the GNSS dongle. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+
+    <!-- Android 13+: needed for the recording notification to be visible. Requested at runtime
+         before the first recording; logging works without it. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -40,6 +50,12 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
+
+        <!-- Owns the USB link and the CSV log; foreground only while a recording is active. -->
+        <service
+            android:name=".GnssLoggingService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
 
         <!-- Used by the "Share" button to hand the CSV log to another app (Drive, email,
              the analysis pipeline, etc.) without exposing a raw file:// path. -->

@@ -97,6 +97,36 @@
             android:textColor="@color/on_surface"
             android:textSize="11sp" />
 
+        <!-- Only visible while a recording session is running. -->
+        <LinearLayout
+            android:id="@+id/timerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.6"
+                android:gravity="center"
+                android:text="@string/label_timer"
+                android:textColor="@color/on_surface"
+                android:textSize="12sp" />
+
+            <Chronometer
+                android:id="@+id/chronometerRecording"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:textColor="@color/kart_red"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnStartStop"
             android:layout_width="match_parent"

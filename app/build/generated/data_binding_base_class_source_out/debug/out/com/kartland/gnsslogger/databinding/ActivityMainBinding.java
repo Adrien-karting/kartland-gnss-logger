@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -28,6 +30,9 @@ public final class ActivityMainBinding implements ViewBinding {
 
   @NonNull
   public final Button btnStartStop;
+
+  @NonNull
+  public final Chronometer chronometerRecording;
 
   @NonNull
   public final TextView textDeviceName;
@@ -65,16 +70,22 @@ public final class ActivityMainBinding implements ViewBinding {
   @NonNull
   public final TextView textStateDetail;
 
+  @NonNull
+  public final LinearLayout timerContainer;
+
   private ActivityMainBinding(@NonNull ScrollView rootView, @NonNull Button btnReconnect,
-      @NonNull Button btnShare, @NonNull Button btnStartStop, @NonNull TextView textDeviceName,
+      @NonNull Button btnShare, @NonNull Button btnStartStop,
+      @NonNull Chronometer chronometerRecording, @NonNull TextView textDeviceName,
       @NonNull TextView textFixType, @NonNull TextView textFixesLogged, @NonNull TextView textHAcc,
       @NonNull TextView textLogFile, @NonNull TextView textNumSv, @NonNull TextView textPosition,
       @NonNull TextView textRate, @NonNull TextView textRawLog, @NonNull TextView textSpeed,
-      @NonNull TextView textState, @NonNull TextView textStateDetail) {
+      @NonNull TextView textState, @NonNull TextView textStateDetail,
+      @NonNull LinearLayout timerContainer) {
     this.rootView = rootView;
     this.btnReconnect = btnReconnect;
     this.btnShare = btnShare;
     this.btnStartStop = btnStartStop;
+    this.chronometerRecording = chronometerRecording;
     this.textDeviceName = textDeviceName;
     this.textFixType = textFixType;
     this.textFixesLogged = textFixesLogged;
@@ -87,6 +98,7 @@ public final class ActivityMainBinding implements ViewBinding {
     this.textSpeed = textSpeed;
     this.textState = textState;
     this.textStateDetail = textStateDetail;
+    this.timerContainer = timerContainer;
   }
 
   @Override
@@ -131,6 +143,12 @@ public final class ActivityMainBinding implements ViewBinding {
       id = R.id.btnStartStop;
       Button btnStartStop = ViewBindings.findChildViewById(rootView, id);
       if (btnStartStop == null) {
+        break missingId;
+      }
+
+      id = R.id.chronometerRecording;
+      Chronometer chronometerRecording = ViewBindings.findChildViewById(rootView, id);
+      if (chronometerRecording == null) {
         break missingId;
       }
 
@@ -206,9 +224,16 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.timerContainer;
+      LinearLayout timerContainer = ViewBindings.findChildViewById(rootView, id);
+      if (timerContainer == null) {
+        break missingId;
+      }
+
       return new ActivityMainBinding((ScrollView) rootView, btnReconnect, btnShare, btnStartStop,
-          textDeviceName, textFixType, textFixesLogged, textHAcc, textLogFile, textNumSv,
-          textPosition, textRate, textRawLog, textSpeed, textState, textStateDetail);
+          chronometerRecording, textDeviceName, textFixType, textFixesLogged, textHAcc, textLogFile,
+          textNumSv, textPosition, textRate, textRawLog, textSpeed, textState, textStateDetail,
+          timerContainer);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

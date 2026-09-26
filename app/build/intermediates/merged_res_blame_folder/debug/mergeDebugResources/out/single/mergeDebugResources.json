@@ -8,6 +8,10 @@
         "source": "com.kartland.gnsslogger.app-main-35:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
+        "merged": "com.kartland.gnsslogger.app-debug-33:/drawable_ic_stat_recording.xml.flat",
+        "source": "com.kartland.gnsslogger.app-main-35:/drawable/ic_stat_recording.xml"
+    },
+    {
         "merged": "com.kartland.gnsslogger.app-debug-33:/xml_device_filter.xml.flat",
         "source": "com.kartland.gnsslogger.app-main-35:/xml/device_filter.xml"
     },

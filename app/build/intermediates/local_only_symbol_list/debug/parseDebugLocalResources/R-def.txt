@@ -8,9 +8,11 @@ color kart_red
 color on_surface
 color surface
 drawable ic_launcher_foreground
+drawable ic_stat_recording
 id btnReconnect
 id btnShare
 id btnStartStop
+id chronometerRecording
 id textDeviceName
 id textFixType
 id textFixesLogged
@@ -23,6 +25,7 @@ id textRawLog
 id textSpeed
 id textState
 id textStateDetail
+id timerContainer
 layout activity_main
 mipmap ic_launcher
 mipmap ic_launcher_round
@@ -31,6 +34,11 @@ string btn_reconnect
 string btn_share
 string btn_start
 string btn_stop
+string dialog_stop_cancel
+string dialog_stop_confirm
+string dialog_stop_message
+string dialog_stop_title
+string error_foreground_unavailable
 string label_fix_type
 string label_fixes_logged
 string label_h_acc
@@ -39,6 +47,11 @@ string label_position
 string label_rate
 string label_raw
 string label_speed
+string label_timer
+string notif_channel_description
+string notif_channel_name
+string notif_text
+string notif_title
 string state_configuring
 string state_detecting
 string state_disconnected

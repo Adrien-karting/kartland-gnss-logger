@@ -3024,6 +3024,7 @@ drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
 drawable ic_search_black_24
+drawable ic_stat_recording
 drawable indeterminate_static
 drawable m3_avd_hide_password
 drawable m3_avd_show_password
@@ -3217,6 +3218,7 @@ id chains
 id checkbox
 id checked
 id chronometer
+id chronometerRecording
 id circle_center
 id clear_text
 id clip_horizontal
@@ -3574,6 +3576,7 @@ id textinput_placeholder
 id textinput_prefix_text
 id textinput_suffix_text
 id time
+id timerContainer
 id title
 id titleDividerNoCustom
 id title_template
@@ -3863,7 +3866,12 @@ string character_counter_content_description
 string character_counter_overflowed_content_description
 string character_counter_pattern
 string clear_text_end_icon_content_description
+string dialog_stop_cancel
+string dialog_stop_confirm
+string dialog_stop_message
+string dialog_stop_title
 string error_a11y_label
+string error_foreground_unavailable
 string error_icon_content_description
 string exposed_dropdown_menu_content_description
 string fab_transformation_scrim_behavior
@@ -3879,6 +3887,7 @@ string label_position
 string label_rate
 string label_raw
 string label_speed
+string label_timer
 string m3_exceed_max_badge_text_suffix
 string m3_ref_typeface_brand_medium
 string m3_ref_typeface_brand_regular
@@ -3979,6 +3988,10 @@ string mtrl_switch_track_decoration_path
 string mtrl_switch_track_path
 string mtrl_timepicker_cancel
 string mtrl_timepicker_confirm
+string notif_channel_description
+string notif_channel_name
+string notif_text
+string notif_title
 string password_toggle_content_description
 string path_password_eye
 string path_password_eye_mask_strike_through

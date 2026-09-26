@@ -12,6 +12,11 @@
     <string name="btn_share">Partager</string>
     <string name="btn_start">Démarrer l\'enregistrement</string>
     <string name="btn_stop">Arrêter l\'enregistrement</string>
+    <string name="dialog_stop_cancel">Continuer l\'enregistrement</string>
+    <string name="dialog_stop_confirm">Arrêter</string>
+    <string name="dialog_stop_message">La session en cours sera terminée et le fichier CSV finalisé. Cette action est définitive.</string>
+    <string name="dialog_stop_title">Arrêter l\'enregistrement ?</string>
+    <string name="error_foreground_unavailable">Service d\'arrière-plan indisponible : l\'enregistrement continue, mais gardez l\'application au premier plan et l\'écran allumé.</string>
     <string name="label_fix_type">Fix</string>
     <string name="label_fixes_logged">Points enregistrés</string>
     <string name="label_h_acc">Précision horiz.</string>
@@ -20,6 +25,11 @@
     <string name="label_rate">Cadence</string>
     <string name="label_raw">Trafic brut (diagnostic)</string>
     <string name="label_speed">Vitesse Doppler</string>
+    <string name="label_timer">Durée d\'enregistrement</string>
+    <string name="notif_channel_description">Notification permanente affichée pendant un enregistrement GNSS, pour qu\'il continue écran éteint.</string>
+    <string name="notif_channel_name">Enregistrement en cours</string>
+    <string name="notif_text">%1$d points enregistrés</string>
+    <string name="notif_title">Enregistrement GNSS en cours</string>
     <string name="state_configuring">Configuration du module…</string>
     <string name="state_detecting">Détection de la vitesse…</string>
     <string name="state_disconnected">Déconnecté</string>
