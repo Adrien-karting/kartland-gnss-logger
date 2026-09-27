@@ -277,6 +277,12 @@ class UsbGnssManager(
             drain(serialPort, buffer)
             parser.reset()
             nmea.reset()
+            // Ask for a UBX reply rather than only listening: a receiver left UBX-only with no
+            // periodic message enabled (e.g. by an interrupted earlier session) sends nothing
+            // unprompted. Sent twice to meet the 2-frame threshold; at a wrong speed the
+            // receiver just sees noise and ignores it.
+            sendPoll(serialPort)
+            sendPoll(serialPort)
 
             val deadline = System.currentTimeMillis() + DETECT_WINDOW_MS
             var bytesSeen = 0
@@ -346,11 +352,15 @@ class UsbGnssManager(
         }
     }
 
-    /** Listens briefly for anything that parses, to confirm the link survived a baud change. */
+    /**
+     * Confirms the link survived a baud change: polls the receiver, then listens briefly for
+     * anything that parses — the poll reply, or the NMEA still flowing at this stage.
+     */
     private fun linkAliveAt(serialPort: UsbSerialPort): Boolean {
         val buffer = ByteArray(READ_BUFFER_SIZE)
         parser.reset()
         nmea.reset()
+        sendPoll(serialPort)
         val deadline = System.currentTimeMillis() + VERIFY_WINDOW_MS
         while (running && System.currentTimeMillis() < deadline) {
             val n = readQuietly(serialPort, buffer)
@@ -433,6 +443,14 @@ class UsbGnssManager(
             }
             -1
         }
+
+    /** Best effort: a failed poll just means we fall back to listening for unsolicited traffic. */
+    private fun sendPoll(serialPort: UsbSerialPort) {
+        try {
+            serialPort.write(UbxProtocol.cfgPrtPollFrame(), WRITE_TIMEOUT_MS)
+        } catch (_: Exception) {
+        }
+    }
 
     /** Reads and discards whatever is already buffered, so a test starts on a clean stream. */
     private fun drain(serialPort: UsbSerialPort, buffer: ByteArray) {

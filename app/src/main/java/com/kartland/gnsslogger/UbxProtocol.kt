@@ -103,14 +103,17 @@ object UbxProtocol {
      * So when we detect a slow default we push the receiver up to 115200 with this message,
      * then re-open our own port at the new speed.
      *
-     * Note the asymmetry in the protocol masks: we keep NMEA *accepted* on input (harmless)
-     * but switch it OFF on output, so the port carries only the UBX frames we care about.
+     * NMEA is deliberately kept ON in the output mask here. This message only changes the speed;
+     * silencing NMEA is the job of [nmeaDisableFrames], sent afterwards. Dropping NMEA output at
+     * this point would leave a receiver with no UBX message enabled yet completely mute at the
+     * new speed — nothing to confirm the switch with, so it would be wrongly judged as "didn't
+     * follow" and we'd fall back to a speed it is no longer listening on.
      */
     fun cfgPrtUartFrame(
         baudRate: Int,
         portId: Int = 1,
         inProtoMask: Int = PROTO_UBX or PROTO_NMEA,
-        outProtoMask: Int = PROTO_UBX,
+        outProtoMask: Int = PROTO_UBX or PROTO_NMEA,
     ): ByteArray {
         val payload = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN).apply {
             put(portId.toByte())            // portID
@@ -125,6 +128,14 @@ object UbxProtocol {
         }.array()
         return buildFrame(CLASS_CFG, ID_CFG_PRT, payload)
     }
+
+    /**
+     * UBX-CFG-PRT poll request (1-byte payload: portID). The receiver answers with its current
+     * CFG-PRT frame, so this is a way to get a checksum-valid UBX reply on demand — including
+     * from a receiver whose periodic output is entirely switched off.
+     */
+    fun cfgPrtPollFrame(portId: Int = 1): ByteArray =
+        buildFrame(CLASS_CFG, ID_CFG_PRT, byteArrayOf(portId.toByte()))
 
     /**
      * The default NMEA sentences (GGA/GLL/GSA/GSV/RMC/VTG), switched off by setting their
